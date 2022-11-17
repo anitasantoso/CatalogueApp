@@ -67,14 +67,16 @@ fun ProductsScreen(
                                     Text("Filter")
                                 }
                             })
-                            items(products.size) { index ->
+                            items(count = products.size, key = {
+                                products.get(it).id
+                            }) { index ->
                                 val product = products.get(index)
                                 CatalogueGridCell(product, onItemClick)
                             }
                         })
                 }
 
-                if(showDialog) {
+                if (showDialog) {
                     FilterDialog(filter, onFilterApplied = { newFilter ->
                         showDialog = false // close
                         filter = newFilter // TODO update products
