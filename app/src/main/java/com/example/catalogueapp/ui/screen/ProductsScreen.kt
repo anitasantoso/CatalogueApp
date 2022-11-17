@@ -74,10 +74,12 @@ fun ProductsScreen(
                         })
                 }
 
-                if (showDialog) {
+                if(showDialog) {
                     FilterDialog(filter, onFilterApplied = { newFilter ->
                         showDialog = false // close
                         filter = newFilter // TODO update products
+                        viewModel.fetchProducts(filter.category)
+
                     }, onDialogDismissed = {
                         showDialog = false
                     })

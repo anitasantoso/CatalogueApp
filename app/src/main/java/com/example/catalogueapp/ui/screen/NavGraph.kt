@@ -21,9 +21,8 @@ sealed class Screen(val route: String, val icon: ImageVector?) {
     object Products : Screen("products", Icons.Outlined.Home)
     object Favourites : Screen("favourites", Icons.Outlined.Favorite)
     object Settings : Screen("settings", Icons.Outlined.Settings)
-    object Info : Screen("info", Icons.Outlined.Info) // TODO move categories to full screen dialog
+    object Info : Screen("info", Icons.Outlined.Info)
     object Details : Screen("details", null)
-    object Categories : Screen("categories", null)
 }
 
 object ScreenArg {
@@ -85,18 +84,13 @@ fun NavGraph(padding: PaddingValues, navController: NavHostController = AppNavig
             FavouritesScreen()
         }
 
-        composable(Screen.Info.route) {
+        composable(Screen.Settings.route) {
             InfoScreen()
         }
 
-        // TODO this is now a full screen dialog
-//        composable(Screen.Categories.route) {
-//            CategoriesScreen(padding) { category ->
-//
-//                // see products for selected category
-//                navController.navigate(Screen.Products, category)
-//            }
-//        }
+        composable(Screen.Info.route) {
+            InfoScreen()
+        }
 
         composable(Screen.Details.route) {
             val product =

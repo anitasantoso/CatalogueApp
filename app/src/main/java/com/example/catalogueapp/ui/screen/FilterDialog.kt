@@ -37,10 +37,11 @@ fun FilterDialog(
     }
 
     Dialog(onDismissRequest = {
-        onDialogDismissed
+        onDialogDismissed()
     }) {
-
-        DialogScaffold(currentFilter, onFilterApplied, onDialogDismissed) { padding ->
+        DialogScaffold(currentFilter, onFilterApplied, onDialogDismissed = {
+            onDialogDismissed()
+        }) { padding ->
             when (viewModel.state) {
                 Resource.Loading -> LoadingState()
 
@@ -87,7 +88,9 @@ fun DialogScaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = { onDialogDismissed }) {
+                    IconButton(onClick = {
+                        onDialogDismissed()
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.Close,
                             contentDescription = "Close"
@@ -110,7 +113,7 @@ fun DialogScaffold(
                     ) {
                         Text(
                             text = "APPLY",
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
