@@ -1,0 +1,6 @@
+package com.example.catalogueapp.ui.screen
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun FavouritesScreen() {}
