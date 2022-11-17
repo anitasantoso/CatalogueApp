@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.catalogueapp.viewmodel.CategoriesViewModel
 import com.example.catalogueapp.viewmodel.Resource
 import com.google.accompanist.flowlayout.FlowRow
+import timber.log.Timber
 
 data class ProductFilter(var category: String?, var priceRange: String?)
 
@@ -31,6 +32,8 @@ fun FilterDialog(
     onFilterApplied: (ProductFilter) -> Unit,
     onDialogDismissed: () -> Unit,
 ) {
+    Timber.d("Dialog recompose")
+
     var currentFilter: ProductFilter by remember { mutableStateOf(filter) }
     LaunchedEffect(Unit) {
         viewModel.fetchCategories()
@@ -139,6 +142,7 @@ fun PriceRangeChips(
                     Text(range)
                 }, colors = AssistChipDefaults.assistChipColors(
                     containerColor = if (currentRange == range) MaterialTheme.colorScheme.primary else Color.Transparent,
+                    labelColor = if(currentRange == range) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                 )
                 )
             }
