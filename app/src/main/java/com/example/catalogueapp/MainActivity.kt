@@ -3,6 +3,7 @@ package com.example.catalogueapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // This app draws behind the system bars, so we want to handle fitting system windows
+        // full screen display
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
@@ -38,21 +39,13 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppScaffold() {
-    Scaffold(
-
-        // TODO make dynamic topbar
-//        topBar = {
-//            TopAppBar(
-//                title = {
-//                    Text(
-//                        "",
-//                        maxLines = 1,
-//                        overflow = TextOverflow.Ellipsis,
-//                        style = MaterialTheme.typography.bodySmall
-//                    )
-//                })
-//        },
-        bottomBar = { BottomAppBar() }, content = {
+    Scaffold(modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            if (AppNavigation.navBarVisible) {
+                BottomAppBar()
+            }
+        },
+        content = {
             NavGraph(it)
         })
 }
@@ -77,6 +70,7 @@ fun BottomAppBar(navController: NavController = AppNavigation.current) {
                 onClick = {
                     navController.navigate(it.route) {
                         launchSingleTop = true
+                        restoreState = true
                     }
                 })
         }

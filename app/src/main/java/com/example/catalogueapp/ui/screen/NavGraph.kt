@@ -23,6 +23,7 @@ sealed class Screen(val route: String, val icon: ImageVector?) {
     object Settings : Screen("settings", Icons.Outlined.Settings)
     object Info : Screen("info", Icons.Outlined.Info)
     object Details : Screen("details", null)
+    object Welcome : Screen("welcome", null)
 }
 
 object ScreenArg {
@@ -45,7 +46,7 @@ fun NavController.navigate(screen: Screen, arg: String? = null) {
 
 @Composable
 fun NavGraph(padding: PaddingValues, navController: NavHostController = AppNavigation.current) {
-    NavHost(navController, Screen.Products.route) {
+    NavHost(navController, Screen.Welcome.route) {
 
         // show all products
         composable(Screen.Products.route) {
@@ -90,6 +91,12 @@ fun NavGraph(padding: PaddingValues, navController: NavHostController = AppNavig
 
         composable(Screen.Info.route) {
             InfoScreen()
+        }
+
+        composable(Screen.Welcome.route) {
+            WelcomeScreen() {
+                navController.navigate(Screen.Products)
+            }
         }
 
         composable(Screen.Details.route) {

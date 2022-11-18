@@ -12,11 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.catalogueapp.AppNavigation
+import com.example.catalogueapp.R
 import com.example.catalogueapp.model.Product
 import com.example.catalogueapp.viewmodel.ProductsViewModel
 import com.example.catalogueapp.viewmodel.Resource
@@ -39,6 +42,7 @@ fun ProductsScreen(
 
     LaunchedEffect(Unit) {
         viewModel.fetchProducts(category)
+        AppNavigation.navBarVisible = true
     }
 
     when (viewModel.state) {
@@ -53,7 +57,7 @@ fun ProductsScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .statusBarsPadding()
+//                        .statusBarsPadding()
                         .padding(padding)
                 ) {
                     LazyVerticalGrid(columns = GridCells.Fixed(3),
@@ -61,10 +65,19 @@ fun ProductsScreen(
                             item(span = {
                                 GridItemSpan(this.maxLineSpan)
                             }, content = {
-                                OutlinedButton(onClick = {
-                                    showDialog = true
-                                }) {
-                                    Text("Filter")
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                ) {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    IconButton(onClick = {
+                                        showDialog = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_baseline_filter_list_24),
+                                            contentDescription = "Filter"
+                                        )
+                                    }
                                 }
                             })
                             items(count = products.size, key = {

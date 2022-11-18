@@ -87,7 +87,7 @@ fun DialogScaffold(
     onDialogDismissed: () -> Unit,
     content: @Composable (padding: PaddingValues) -> Unit
 ) {
-    Scaffold(
+    Scaffold(modifier = Modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
                 navigationIcon = {
