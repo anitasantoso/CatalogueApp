@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.catalogueapp.AppNavigation
 import com.example.catalogueapp.model.Product
+import com.google.accompanist.pager.ExperimentalPagerApi
 
 sealed class Screen(val route: String, val icon: ImageVector?) {
     object Products : Screen("products", Icons.Outlined.Home)
@@ -44,8 +45,9 @@ fun NavController.navigate(screen: Screen, arg: String? = null) {
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun NavGraph(padding: PaddingValues, navController: NavHostController = AppNavigation.current) {
+fun NavGraph(padding: PaddingValues, navController: NavHostController = AppNavigation.navController) {
     NavHost(navController, Screen.Welcome.route) {
 
         // show all products

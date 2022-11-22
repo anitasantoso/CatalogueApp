@@ -1,6 +1,7 @@
 package com.example.catalogueapp.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
@@ -23,30 +24,46 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun WelcomeScreen(onNextClick: () -> Unit) {
-
-    var buttonVisible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        buttonVisible = true
-        AppNavigation.navBarVisible = false
-    }
-
-    val pagerState = rememberPagerState()
+fun WelcomeScreen(
+    onNextClick: () -> Unit
+) {
     val content = listOf(
         "Hello!\nSwipe left to see more text.",
         "This is some more text.",
         "And more text here."
     )
+    var buttonVisible by remember { mutableStateOf(false) }
+
+    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState()
+
+    var colour1 = MaterialTheme.colorScheme.onPrimaryContainer
+    var colour2 = Color.Gray
+    var currentColor by remember { mutableStateOf(colour2) }
+
+    LaunchedEffect(Unit) {
+        buttonVisible = true
+        AppNavigation.navBarVisible = false
+
+        coroutineScope.launch {
+            snapshotFlow { pagerState.currentPage }.collectLatest { page ->
+                Timber.d("Current page: $page")
+                currentColor = if (currentColor == colour1) colour2 else colour1
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
-
         HorizontalPager(
             content.size,
             state = pagerState,
@@ -54,21 +71,23 @@ fun WelcomeScreen(onNextClick: () -> Unit) {
                 .fillMaxSize()
                 .align(Alignment.TopCenter),
         ) { page ->
-            Surface(
-                modifier = Modifier
-                    .fillMaxSize(), color = Color.Gray
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+            Crossfade(targetState = currentColor, animationSpec = tween(500)) {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize(), color = it
                 ) {
-                    Text(
-                        modifier = Modifier.padding(20.dp),
-                        text = content[page],
-                        style = MaterialTheme.typography.displayLarge,
-                        color = Color.White,
-                        textAlign = TextAlign.Center
-                    )
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(20.dp),
+                            text = content[page],
+                            style = MaterialTheme.typography.displayLarge,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
         }

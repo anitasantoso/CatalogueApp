@@ -51,7 +51,7 @@ fun AppScaffold() {
 }
 
 @Composable
-fun BottomAppBar(navController: NavController = AppNavigation.current) {
+fun BottomAppBar(navController: NavController = AppNavigation.navController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 

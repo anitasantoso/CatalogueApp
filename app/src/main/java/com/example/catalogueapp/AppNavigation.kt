@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
 object AppNavigation {
-    val current: NavHostController
+    val navController: NavHostController
         @Composable
         get() = LocalNavHostController.current
 

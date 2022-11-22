@@ -12,7 +12,7 @@ import com.example.catalogueapp.AppNavigation
 
 @Composable
 fun BackButton() {
-    val navController = AppNavigation.current
+    val navController = AppNavigation.navController
     Icon(
         imageVector = Icons.Default.ArrowBack,
         contentDescription = "Back",

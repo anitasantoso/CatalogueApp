@@ -37,7 +37,7 @@ fun ProductsScreen(
     // must survive recomposition and screen rotation
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
-    // TODO custom saver
+    // TODO custom saver for rememberSaveable
     var filter by remember { mutableStateOf(ProductFilter(null, null)) }
 
     LaunchedEffect(Unit) {
