@@ -1,6 +1,7 @@
 package com.example.catalogueapp.ui.screen
 
-import androidx.compose.animation.*
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.catalogueapp.AppNavigation
@@ -79,49 +82,37 @@ fun WelcomeScreen(
                 modifier = Modifier
                     .fillMaxSize(), color = backgroundColor
             ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        modifier = Modifier.padding(20.dp),
-                        text = content[page],
-                        style = MaterialTheme.typography.displayLarge,
-                        color = Color.White,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                Text(
+                    modifier = Modifier
+                        .padding(PaddingValues(top = 200.dp))
+                        .align(Alignment.TopCenter),
+                    text = content[page],
+                    style = MaterialTheme.typography.displayLarge,
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
             }
         }
 
         Column(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(PaddingValues(bottom = 100.dp)),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             HorizontalPagerIndicator(
                 pagerState, activeColor = Color.White,
             )
-
-            Spacer(modifier = Modifier.height(40.dp))
-            SlideInButton(buttonVisible, onNextClick)
-            Spacer(modifier = Modifier.height(100.dp))
-        }
-    }
-}
-
-/**
- * Taken from https://developer.android.com/reference/kotlin/androidx/compose/animation/package-summary#slideInVertically(androidx.compose.animation.core.FiniteAnimationSpec,kotlin.Function1)
- */
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun SlideInButton(buttonVisible: Boolean, onNextClick: () -> Unit) {
-    ScaleInAnimation(buttonVisible) {
-        PrimaryButton(
-            "Let me in",
-            onClick = {
-                onNextClick()
+            Spacer(Modifier.height(30.dp))
+            ScaleInAnimation(buttonVisible) {
+                PrimaryButton(
+                    "Let me in",
+                    onClick = {
+                        onNextClick()
+                    }
+                )
             }
-        )
+        }
     }
 }
 
@@ -148,4 +139,21 @@ fun PrimaryButton(
                 .align(Alignment.Center)
         )
     }
+}
+
+@Composable
+@Preview(name = "welcome_phone", showSystemUi = true, showBackground = true, device = Devices.PHONE)
+fun WelcomePhonePreview() {
+    WelcomeScreen {}
+}
+
+@Composable
+@Preview(
+    name = "welcome_tablet",
+    showSystemUi = true,
+    showBackground = true,
+    device = Devices.TABLET
+)
+fun WelcomeTabletPreview() {
+    WelcomeScreen {}
 }

@@ -1,9 +1,6 @@
 package com.example.catalogueapp.ui.screen
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -17,13 +14,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.catalogueapp.R
 import com.example.catalogueapp.model.Product
 import com.example.catalogueapp.ui.BackButton
 
 @Composable
 fun DetailScreen(padding: PaddingValues, product: Product?) {
     product?.let {
-        Surface {
+        Surface(Modifier.padding(padding)) {
             var state = rememberScrollState(0)
             Column(
                 modifier = Modifier
@@ -32,12 +30,12 @@ fun DetailScreen(padding: PaddingValues, product: Product?) {
                     .statusBarsPadding()
             ) {
                 BackButton()
-
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(product.image)
                         .crossfade(true)
                         .size(300)
+                        .placeholder(R.drawable.placeholder)
                         .build(),
                     "",
                     Modifier
@@ -66,3 +64,25 @@ fun DetailScreen(padding: PaddingValues, product: Product?) {
         }
     }
 }
+
+//@Composable
+//@Preview(
+//    name = "detail_phone",
+//    showSystemUi = true,
+//    showBackground = true,
+//    device = Devices.PHONE
+//)
+//fun DetailPhonePreview(@PreviewParameter(ProductDataProvider::class) product: Product) {
+//    DetailScreen(PaddingValues(0.dp), product)
+//}
+//
+//@Composable
+//@Preview(
+//    name = "detail_tablet",
+//    showSystemUi = true,
+//    showBackground = true,
+//    device = Devices.TABLET
+//)
+//fun DetailTabletPreview(@PreviewParameter(ProductDataProvider::class) product: Product) {
+//    DetailScreen(PaddingValues(0.dp), product)
+//}
