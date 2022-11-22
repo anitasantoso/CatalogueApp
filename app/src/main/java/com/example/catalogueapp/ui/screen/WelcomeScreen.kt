@@ -1,9 +1,7 @@
 package com.example.catalogueapp.ui.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.catalogueapp.AppNavigation
+import com.example.catalogueapp.ui.ScaleInAnimation
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
@@ -29,7 +28,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun WelcomeScreen(
     onNextClick: () -> Unit
@@ -46,7 +45,12 @@ fun WelcomeScreen(
 
     var colour1 = MaterialTheme.colorScheme.onPrimaryContainer
     var colour2 = Color.Gray
-    var currentColor by remember { mutableStateOf(colour2) }
+    var state by remember { mutableStateOf(false) }
+
+    val backgroundColor by animateColorAsState(
+        if (state) colour1 else colour2,
+        animationSpec = tween(1000)
+    )
 
     LaunchedEffect(Unit) {
         buttonVisible = true
@@ -55,7 +59,7 @@ fun WelcomeScreen(
         coroutineScope.launch {
             snapshotFlow { pagerState.currentPage }.collectLatest { page ->
                 Timber.d("Current page: $page")
-                currentColor = if (currentColor == colour1) colour2 else colour1
+                state = !state
             }
         }
     }
@@ -71,23 +75,21 @@ fun WelcomeScreen(
                 .fillMaxSize()
                 .align(Alignment.TopCenter),
         ) { page ->
-            Crossfade(targetState = currentColor, animationSpec = tween(500)) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize(), color = it
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize(), color = backgroundColor
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(20.dp),
-                            text = content[page],
-                            style = MaterialTheme.typography.displayLarge,
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                    Text(
+                        modifier = Modifier.padding(20.dp),
+                        text = content[page],
+                        style = MaterialTheme.typography.displayLarge,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }
@@ -101,22 +103,25 @@ fun WelcomeScreen(
             )
 
             Spacer(modifier = Modifier.height(40.dp))
-
-            AnimatedVisibility(
-                visible = buttonVisible,
-                enter = fadeIn(
-                    animationSpec = tween(2000)
-                ),
-            ) {
-                PrimaryButton(
-                    "Let me in",
-                    onClick = {
-                        onNextClick()
-                    }
-                )
-            }
+            SlideInButton(buttonVisible, onNextClick)
             Spacer(modifier = Modifier.height(100.dp))
         }
+    }
+}
+
+/**
+ * Taken from https://developer.android.com/reference/kotlin/androidx/compose/animation/package-summary#slideInVertically(androidx.compose.animation.core.FiniteAnimationSpec,kotlin.Function1)
+ */
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun SlideInButton(buttonVisible: Boolean, onNextClick: () -> Unit) {
+    ScaleInAnimation(buttonVisible) {
+        PrimaryButton(
+            "Let me in",
+            onClick = {
+                onNextClick()
+            }
+        )
     }
 }
 

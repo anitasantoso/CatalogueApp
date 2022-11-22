@@ -1,5 +1,6 @@
 package com.example.catalogueapp.ui.screen
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -11,20 +12,24 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.catalogueapp.ui.FADE_ANIM_DURATION
+import com.example.catalogueapp.ui.ScaleInAnimation
 import com.example.catalogueapp.viewmodel.CategoriesViewModel
 import com.example.catalogueapp.viewmodel.Resource
 import com.google.accompanist.flowlayout.FlowRow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 data class ProductFilter(var category: String?, var priceRange: String?)
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun FilterDialog(
     filter: ProductFilter,
@@ -33,43 +38,63 @@ fun FilterDialog(
     onDialogDismissed: () -> Unit,
 ) {
     Timber.d("Dialog recompose")
+    val coroutineScope = rememberCoroutineScope()
 
     var currentFilter: ProductFilter by remember { mutableStateOf(filter) }
-    LaunchedEffect(Unit) {
-        viewModel.fetchCategories()
+    var dialogVisible by remember { mutableStateOf(false) }
+
+    val showDialog: () -> Unit = {
+        coroutineScope.launch {
+            delay(FADE_ANIM_DURATION) // wait for dialog to construct
+            dialogVisible = true
+        }
     }
 
-    Dialog(onDismissRequest = {
-        onDialogDismissed()
-    }) {
-        DialogScaffold(currentFilter, onFilterApplied, onDialogDismissed = {
+    val dismissDialog: () -> Unit = {
+        coroutineScope.launch {
+            dialogVisible = false
+            delay(FADE_ANIM_DURATION) // wait for animation to finish
             onDialogDismissed()
-        }) { padding ->
-            when (viewModel.state) {
-                Resource.Loading -> LoadingState()
+        }
+    }
 
-                is Resource.Error -> {} // TODO handle error
-                is Resource.Success -> {
-                    viewModel.state.let {
+    LaunchedEffect(Unit) {
+        viewModel.fetchCategories()
+        showDialog()
+    }
 
-                        // categories won't change
-                        val categories = rememberSaveable { (it as Resource.Success).data }
-                        Column(
-                            Modifier
-                                .verticalScroll(rememberScrollState())
-                                .fillMaxSize()
-                                .padding(10.dp)
-                        ) {
-                            PriceRangeChips(padding, currentFilter.priceRange) { range ->
-                                var filter = currentFilter.copy()
-                                filter.priceRange = range
-                                currentFilter = filter
-                            }
-                            Spacer(modifier = Modifier.height(20.dp))
-                            CategoriesList(categories, currentFilter.category) { cat ->
-                                var filter = currentFilter.copy()
-                                filter.category = cat
-                                currentFilter = filter
+    Dialog(onDismissRequest = dismissDialog) {
+        ScaleInAnimation(dialogVisible) {
+            DialogScaffold(
+                currentFilter,
+                onFilterApplied,
+                dismissDialog
+            ) { padding ->
+                when (viewModel.state) {
+                    Resource.Loading -> LoadingState()
+
+                    is Resource.Error -> {} // TODO handle error
+                    is Resource.Success -> {
+                        viewModel.state.let {
+
+                            val categories = remember { (it as Resource.Success).data }
+                            Column(
+                                Modifier
+                                    .verticalScroll(rememberScrollState())
+                                    .fillMaxSize()
+                                    .padding(10.dp)
+                            ) {
+                                PriceRangeChips(padding, currentFilter.priceRange) { range ->
+                                    var filter = currentFilter.copy()
+                                    filter.priceRange = range
+                                    currentFilter = filter
+                                }
+                                Spacer(modifier = Modifier.height(20.dp))
+                                CategoriesList(categories, currentFilter.category) { cat ->
+                                    var filter = currentFilter.copy()
+                                    filter.category = cat
+                                    currentFilter = filter
+                                }
                             }
                         }
                     }
@@ -142,7 +167,7 @@ fun PriceRangeChips(
                     Text(range)
                 }, colors = AssistChipDefaults.assistChipColors(
                     containerColor = if (currentRange == range) MaterialTheme.colorScheme.primary else Color.Transparent,
-                    labelColor = if(currentRange == range) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                    labelColor = if (currentRange == range) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                 )
                 )
             }
