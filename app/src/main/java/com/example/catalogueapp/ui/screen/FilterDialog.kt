@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.catalogueapp.ui.FADE_ANIM_DURATION
+import com.example.catalogueapp.ui.ANIM_DURATION
 import com.example.catalogueapp.ui.ScaleInAnimation
 import com.example.catalogueapp.viewmodel.CategoriesViewModel
 import com.example.catalogueapp.viewmodel.Resource
@@ -44,7 +44,7 @@ fun FilterDialog(
 
     val showDialog: () -> Unit = {
         coroutineScope.launch {
-            delay(FADE_ANIM_DURATION) // wait for dialog to construct
+            delay(ANIM_DURATION) // wait for dialog to construct
             dialogVisible = true
         }
     }
@@ -52,7 +52,7 @@ fun FilterDialog(
     val dismissDialog: () -> Unit = {
         coroutineScope.launch {
             dialogVisible = false
-            delay(FADE_ANIM_DURATION) // wait for animation to finish
+            delay(ANIM_DURATION) // wait for animation to finish
             onDialogDismissed()
         }
     }

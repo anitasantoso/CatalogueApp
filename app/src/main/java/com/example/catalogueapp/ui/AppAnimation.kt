@@ -4,17 +4,17 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 
-const val FADE_ANIM_DURATION = 500L
+const val ANIM_DURATION = 300L
 
 @Composable
 fun FadeInAnimation(visible: Boolean, content: @Composable() AnimatedVisibilityScope.() -> Unit) {
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn(
-            animationSpec = tween(FADE_ANIM_DURATION.toInt())
+            animationSpec = tween(ANIM_DURATION.toInt())
         ),
         exit = fadeOut(
-            animationSpec = tween(FADE_ANIM_DURATION.toInt())
+            animationSpec = tween(ANIM_DURATION.toInt())
         ), content = content
     )
 }
@@ -25,10 +25,10 @@ fun ScaleInAnimation(visible: Boolean, delay: Int = 0, content: @Composable() An
     AnimatedVisibility(
         visible,
         enter = scaleIn(
-            animationSpec = tween(FADE_ANIM_DURATION.toInt(), delay)
+            animationSpec = tween(ANIM_DURATION.toInt(), delay)
         ),
         exit = scaleOut(
-            animationSpec = tween(FADE_ANIM_DURATION.toInt(), delay)
+            animationSpec = tween(ANIM_DURATION.toInt(), delay)
         ), content = content
     )
 }
