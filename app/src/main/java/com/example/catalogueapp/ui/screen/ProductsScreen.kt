@@ -28,7 +28,7 @@ import timber.log.Timber
 @Composable
 fun ProductsScreen(
     padding: PaddingValues,
-    category: String?,
+    category: String,
     onItemClick: (Product) -> Unit,
     viewModel: ProductsViewModel = hiltViewModel()
 ) {
@@ -38,7 +38,7 @@ fun ProductsScreen(
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     // TODO custom saver for rememberSaveable
-    var filter by remember { mutableStateOf(ProductFilter(null, null)) }
+    var filter by remember { mutableStateOf(ProductFilter("", null)) }
 
     LaunchedEffect(Unit) {
         viewModel.fetchProducts(category)
@@ -57,7 +57,6 @@ fun ProductsScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-//                        .statusBarsPadding()
                         .padding(padding)
                 ) {
                     LazyVerticalGrid(columns = GridCells.Fixed(3),
@@ -90,9 +89,9 @@ fun ProductsScreen(
                 }
 
                 if (showDialog) {
-                    FilterDialog(filter, onFilterApplied = { newFilter ->
+                    FilterDialog(padding, filter, onFilterApplied = { newFilter ->
                         showDialog = false // close
-                        filter = newFilter // TODO update products
+                        filter = newFilter
                         viewModel.fetchProducts(filter.category)
 
                     }, onDialogDismissed = {

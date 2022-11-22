@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.catalogueapp.ui.FADE_ANIM_DURATION
 import com.example.catalogueapp.ui.ScaleInAnimation
@@ -27,11 +25,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-data class ProductFilter(var category: String?, var priceRange: String?)
+// use empty string "" for "all categories"
+data class ProductFilter(var category: String, var priceRange: String?)
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun FilterDialog(
+    padding: PaddingValues,
     filter: ProductFilter,
     viewModel: CategoriesViewModel = hiltViewModel(),
     onFilterApplied: (ProductFilter) -> Unit,
@@ -63,38 +62,38 @@ fun FilterDialog(
         showDialog()
     }
 
-    Dialog(onDismissRequest = dismissDialog) {
-        ScaleInAnimation(dialogVisible) {
-            DialogScaffold(
-                currentFilter,
-                onFilterApplied,
-                dismissDialog
-            ) { padding ->
-                when (viewModel.state) {
-                    Resource.Loading -> LoadingState()
+//    Dialog(onDismissRequest = dismissDialog) {
+    ScaleInAnimation(dialogVisible) {
+        DialogScaffold(
+            padding,
+            currentFilter,
+            onFilterApplied,
+            dismissDialog
+        ) { padding ->
+            when (viewModel.state) {
+                Resource.Loading -> LoadingState()
 
-                    is Resource.Error -> {} // TODO handle error
-                    is Resource.Success -> {
-                        viewModel.state.let {
+                is Resource.Error -> {} // TODO handle error
+                is Resource.Success -> {
+                    viewModel.state.let {
 
-                            val categories = remember { (it as Resource.Success).data }
-                            Column(
-                                Modifier
-                                    .verticalScroll(rememberScrollState())
-                                    .fillMaxSize()
-                                    .padding(10.dp)
-                            ) {
-                                PriceRangeChips(padding, currentFilter.priceRange) { range ->
-                                    var filter = currentFilter.copy()
-                                    filter.priceRange = range
-                                    currentFilter = filter
-                                }
-                                Spacer(modifier = Modifier.height(20.dp))
-                                CategoriesList(categories, currentFilter.category) { cat ->
-                                    var filter = currentFilter.copy()
-                                    filter.category = cat
-                                    currentFilter = filter
-                                }
+                        val categories = remember { (it as Resource.Success).data }
+                        Column(
+                            Modifier
+                                .verticalScroll(rememberScrollState())
+                                .fillMaxSize()
+                                .padding(10.dp)
+                        ) {
+                            PriceRangeChips(currentFilter.priceRange) { range ->
+                                var filter = currentFilter.copy()
+                                filter.priceRange = range
+                                currentFilter = filter
+                            }
+                            Spacer(modifier = Modifier.height(20.dp))
+                            CategoriesList(categories, currentFilter.category) { cat ->
+                                var filter = currentFilter.copy()
+                                filter.category = cat
+                                currentFilter = filter
                             }
                         }
                     }
@@ -102,17 +101,21 @@ fun FilterDialog(
             }
         }
     }
+//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogScaffold(
+    padding: PaddingValues,
     currentFilter: ProductFilter,
     onFilterApplied: (ProductFilter) -> Unit,
     onDialogDismissed: () -> Unit,
     content: @Composable (padding: PaddingValues) -> Unit
 ) {
-    Scaffold(modifier = Modifier.fillMaxSize(),
+    Scaffold(modifier = Modifier
+        .fillMaxSize()
+        .padding(padding),
         topBar = {
             CenterAlignedTopAppBar(
                 navigationIcon = {
@@ -149,10 +152,9 @@ fun DialogScaffold(
         }) { padding -> content(padding) }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PriceRangeChips(
-    padding: PaddingValues,
     currentRange: String?,
     onPriceRangeClicked: (String) -> Unit
 ) {
@@ -183,9 +185,17 @@ fun CategoriesList(
 ) {
     Column {
         Text("Category", style = MaterialTheme.typography.titleMedium)
-        categories.forEach() { cat ->
-            CategoryOption(cat, selected = cat == currentCategory) {
-                onCategoryClicked(cat)
+
+        val catMap = categories.map {
+            it to it
+        }.toMap().toMutableMap()
+
+        // add "all categories"
+        catMap.put("All categories", "")
+
+        catMap.forEach { entry ->
+            CategoryOption(entry.key, selected = entry.value == currentCategory) {
+                onCategoryClicked(entry.value)
             }
         }
     }

@@ -15,6 +15,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.catalogueapp.ui.screen.NavGraph
 import com.example.catalogueapp.ui.screen.TopLevelScreens
 import com.example.catalogueapp.ui.theme.AppTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,15 +24,27 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // full screen display
+        // display behind status bar
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
+            hideSystemUI() // hide system nav bar
+
             AppTheme {
                 ProvideNavHostController {
                     AppScaffold()
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun hideSystemUI() {
+        val systemUiController = rememberSystemUiController()
+        systemUiController.apply {
+            // isStatusBarVisible = false
+            isNavigationBarVisible = false
+            // isSystemBarsVisible = false
         }
     }
 }

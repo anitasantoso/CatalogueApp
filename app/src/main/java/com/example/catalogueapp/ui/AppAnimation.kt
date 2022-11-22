@@ -11,10 +11,10 @@ fun FadeInAnimation(visible: Boolean, content: @Composable() AnimatedVisibilityS
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn(
-            animationSpec = tween(2000)
+            animationSpec = tween(FADE_ANIM_DURATION.toInt())
         ),
         exit = fadeOut(
-            animationSpec = tween(2000)
+            animationSpec = tween(FADE_ANIM_DURATION.toInt())
         ), content = content
     )
 }

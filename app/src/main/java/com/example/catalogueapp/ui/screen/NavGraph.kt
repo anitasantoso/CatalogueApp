@@ -52,7 +52,7 @@ fun NavGraph(padding: PaddingValues, navController: NavHostController = AppNavig
 
         // show all products
         composable(Screen.Products.route) {
-            ProductsScreen(padding,null, { product ->
+            ProductsScreen(padding,"", { product ->
 
                 // on product selected
                 navController.currentBackStackEntry?.savedStateHandle?.set(
@@ -69,7 +69,9 @@ fun NavGraph(padding: PaddingValues, navController: NavHostController = AppNavig
             listOf(navArgument(ScreenArg.Category) { type = NavType.StringType })
         ) {
             val args = it.arguments
-            val category = args?.getString(ScreenArg.Category)
+
+            // if null, return empty string
+            val category = (args?.getString(ScreenArg.Category)) ?: ""
 
             // show all products or for a given category if not null
             ProductsScreen(padding, category, { product ->

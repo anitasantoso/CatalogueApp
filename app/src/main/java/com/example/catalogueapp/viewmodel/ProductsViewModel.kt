@@ -20,13 +20,13 @@ class ProductsViewModel @Inject constructor(private val networkService: NetworkS
     var state by mutableStateOf<Resource<List<Product>>>(Resource.Loading)
         private set
 
-    fun fetchProducts(category: String?) {
+    fun fetchProducts(category: String) {
         viewModelScope.launch(Dispatchers.IO) {
             state = Resource.Loading
 
-            val result = category?.let {
-                networkService.getProductsByCategory(category!!)
-            } ?: run {
+            val result = if (category.isNotEmpty()) {
+                networkService.getProductsByCategory(category)
+            } else {
                 networkService.getProducts()
             }
 
