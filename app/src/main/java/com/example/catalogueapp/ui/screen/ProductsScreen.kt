@@ -10,7 +10,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -50,14 +49,13 @@ fun ProductsScreen(
         is Resource.Error -> {} // TODO handle error
         is Resource.Success -> {
             viewModel.state.let {
-                val products = (it as Resource.Success).data
 
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(padding)
                 ) {
-                    LazyVerticalGrid(columns = GridCells.Fixed(3),
+                    LazyVerticalGrid(columns = GridCells.Adaptive(120.dp),
                         content = {
                             item(span = {
                                 GridItemSpan(this.maxLineSpan)
@@ -77,6 +75,8 @@ fun ProductsScreen(
                                     }
                                 }
                             })
+
+                            val products = (it as Resource.Success).data
                             items(count = products.size, key = {
                                 products.get(it).id
                             }) { index ->
@@ -104,31 +104,43 @@ fun ProductsScreen(
 @Composable
 fun CatalogueGridCell(product: Product, onItemClick: (Product) -> Unit) {
     Card(modifier = Modifier
-        .padding(5.dp)
+        .fillMaxSize()
         .clickable { onItemClick(product) }
-        .height(150.dp),
+        .padding(5.dp)
+        .defaultMinSize(minHeight = 170.dp)
+        .width(intrinsicSize = IntrinsicSize.Max)
+        .height(intrinsicSize = IntrinsicSize.Max)
+        .wrapContentHeight(),
         colors = CardDefaults.elevatedCardColors(),
         elevation = CardDefaults.elevatedCardElevation()) {
 
-        Column(verticalArrangement = Arrangement.SpaceBetween) {
-            AsyncImage(
-                ImageRequest.Builder(LocalContext.current)
-                    .data(product.image)
-                    .size(300)
-                    .crossfade(true)
-                    .build(),
-                product.title,
-                Modifier.align(Alignment.CenterHorizontally),
-                contentScale = ContentScale.Fit
-            )
-            Box(
+        Column(
+            modifier = Modifier
+                .fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
                 modifier = Modifier
-                    .weight(1.0f, false)
-                    .height(50.dp)
+                    .align(Alignment.CenterHorizontally)
+                    .weight(4.0f, true)
+            ) {
+                AsyncImage(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(product.image)
+                        .crossfade(true)
+                        .build(),
+                    product.title
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .weight(1.0f, true)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    text = product.title,
+                    text = product.title.trim(),
                     textAlign = TextAlign.Center,
                     maxLines = 2,
                     style = MaterialTheme.typography.bodySmall
