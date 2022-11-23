@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.catalogueapp.AppNavigation
 import com.example.catalogueapp.R
 import com.example.catalogueapp.model.Product
 import com.example.catalogueapp.viewmodel.ProductsViewModel
@@ -37,12 +36,11 @@ fun ProductsScreen(
     // must survive recomposition and screen rotation
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
-    // TODO custom saver for rememberSaveable
+    // TODO move to viewmodel to survive rotation
     var filter by remember { mutableStateOf(ProductFilter("", null)) }
 
     LaunchedEffect(Unit) {
         viewModel.fetchProducts(category)
-        AppNavigation.navBarVisible = true
     }
 
     when (viewModel.state) {

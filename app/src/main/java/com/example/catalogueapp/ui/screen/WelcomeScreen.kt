@@ -57,7 +57,6 @@ fun WelcomeScreen(
 
     LaunchedEffect(Unit) {
         buttonVisible = true
-        AppNavigation.navBarVisible = false
 
         coroutineScope.launch {
             snapshotFlow { pagerState.currentPage }.collectLatest { page ->

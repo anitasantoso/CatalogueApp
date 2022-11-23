@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
 fun AppScaffold() {
     Scaffold(modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            if (AppNavigation.navBarVisible) {
+            if (AppNavigation.shouldShowBottomBar) {
                 BottomAppBar()
             }
         },
