@@ -20,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.catalogueapp.AppNavigation
 import com.example.catalogueapp.ui.ScaleInAnimation
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -81,35 +80,66 @@ fun WelcomeScreen(
                 modifier = Modifier
                     .fillMaxSize(), color = backgroundColor
             ) {
-                Text(
+                Column(
                     modifier = Modifier
-                        .padding(PaddingValues(top = 200.dp))
-                        .align(Alignment.TopCenter),
-                    text = content[page],
-                    style = MaterialTheme.typography.displayLarge,
-                    color = Color.White,
-                    textAlign = TextAlign.Center
-                )
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(3.0f),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = content[page],
+                            style = MaterialTheme.typography.displayLarge,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    Spacer(
+                        modifier = Modifier
+                            .weight(1.0f)
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .weight(2.0f)
+                    )
+                }
             }
         }
 
         Column(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(PaddingValues(bottom = 100.dp)),
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            HorizontalPagerIndicator(
-                pagerState, activeColor = Color.White,
+            Spacer(
+                modifier = Modifier
+                    .weight(3.0f)
             )
-            Spacer(Modifier.height(30.dp))
-            ScaleInAnimation(buttonVisible) {
-                PrimaryButton(
-                    "Let me in",
-                    onClick = {
-                        onNextClick()
-                    }
+            Column(
+                modifier = Modifier
+                    .weight(1.0f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                HorizontalPagerIndicator(
+                    pagerState, activeColor = Color.White,
                 )
+            }
+            Column(
+                modifier = Modifier
+                    .weight(2.0f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                ScaleInAnimation(buttonVisible) {
+                    PrimaryButton(
+                        "Let me in",
+                        onClick = onNextClick
+                    )
+                }
             }
         }
     }
