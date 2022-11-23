@@ -91,3 +91,4 @@ lint/tmp/
 .gradle/7.4/fileHashes/resourceHashesCache.bin
 .gradle/buildOutputCleanup/buildOutputCleanup.lock
 .gradle/buildOutputCleanup/outputFiles.bin
+.idea/deploymentTargetDropDown.xml

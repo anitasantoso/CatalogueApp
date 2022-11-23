@@ -1,6 +1,5 @@
 package com.example.catalogueapp.ui.screen
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -8,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,7 +28,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun WelcomeScreen(
     onNextClick: () -> Unit
@@ -69,6 +67,8 @@ fun WelcomeScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
+
+        // box content
         HorizontalPager(
             content.size,
             state = pagerState,
@@ -76,69 +76,52 @@ fun WelcomeScreen(
                 .fillMaxSize()
                 .align(Alignment.TopCenter),
         ) { page ->
-            Surface(
+            BoxWithConstraints(
                 modifier = Modifier
-                    .fillMaxSize(), color = backgroundColor
+                    .fillMaxSize()
+                    .background(backgroundColor)
             ) {
+                // take up upper half of the screen, align top
                 Column(
                     modifier = Modifier
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceEvenly
+                        .height(this.maxHeight / 2)
+                        .align(Alignment.TopCenter)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(3.0f),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = content[page],
-                            style = MaterialTheme.typography.displayLarge,
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    Spacer(
-                        modifier = Modifier
-                            .weight(1.0f)
-                    )
-                    Spacer(
-                        modifier = Modifier
-                            .weight(2.0f)
-                    )
+                    LargeText(content[page])
                 }
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Spacer(
-                modifier = Modifier
-                    .weight(3.0f)
-            )
+        // box content
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+
+            // occupy 1/3 of bottom screen
             Column(
                 modifier = Modifier
-                    .weight(1.0f),
-                verticalArrangement = Arrangement.Center
+                    .height(this.maxHeight / 2)
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 HorizontalPagerIndicator(
                     pagerState, activeColor = Color.White,
                 )
-            }
-            Column(
-                modifier = Modifier
-                    .weight(2.0f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                ScaleInAnimation(buttonVisible) {
-                    PrimaryButton(
-                        "Let me in",
-                        onClick = onNextClick
-                    )
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    ScaleInAnimation(buttonVisible) {
+                        LargeButton(
+                            "Let me in",
+                            onClick = onNextClick
+                        )
+                    }
                 }
             }
         }
@@ -146,7 +129,17 @@ fun WelcomeScreen(
 }
 
 @Composable
-fun PrimaryButton(
+fun LargeText(content: String) {
+    Text(
+        text = content,
+        style = MaterialTheme.typography.displayLarge,
+        color = Color.White,
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+fun LargeButton(
     text: String,
     height: Dp = 58.dp,
     onClick: () -> Unit
