@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -109,9 +110,8 @@ fun CatalogueGridCell(product: Product, onItemClick: (Product) -> Unit) {
         .padding(5.dp)
         .defaultMinSize(minHeight = 170.dp)
         .width(intrinsicSize = IntrinsicSize.Max)
-        .height(intrinsicSize = IntrinsicSize.Max)
-        .wrapContentHeight(),
-        colors = CardDefaults.elevatedCardColors(),
+        .height(intrinsicSize = IntrinsicSize.Max),
+        colors = CardDefaults.outlinedCardColors(Color.White),
         elevation = CardDefaults.elevatedCardElevation()) {
 
         Column(

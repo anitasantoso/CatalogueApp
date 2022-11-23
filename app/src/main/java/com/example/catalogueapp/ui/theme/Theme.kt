@@ -5,8 +5,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
@@ -89,9 +87,4 @@ fun AppTheme(
         typography = typography,
         content = content
     )
-
-    val systemUiController = rememberSystemUiController()
-    LaunchedEffect(Unit) {
-        systemUiController.isNavigationBarVisible = false
-    }
 }
